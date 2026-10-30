@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0710">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Monster">
+  <title>Monster Soundboard</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1><span class="eye"></span> Monster Door</h1>
+    <div id="status" aria-live="polite">Loading sounds…</div>
+    <div class="controls">
+      <button id="overlap" class="ctl" aria-pressed="false" title="Let sounds play over each other">Layer: off</button>
+      <button id="fullscreen" class="ctl" title="Fullscreen">⛶</button>
+      <button id="stop" class="ctl stop">■ STOP</button>
+    </div>
+  </header>
+
+  <main id="board" aria-label="Sound buttons"></main>
+
+  <div id="wake" role="button" tabindex="0">
+    <div class="wake-inner">
+      <div class="big">👹</div>
+      <div>Tap to wake the monster</div>
+      <small id="wake-progress">loading sounds…</small>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
