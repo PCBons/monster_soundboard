@@ -1,5 +1,5 @@
-// Procedural monster sound synthesizer.
-// Compiled on the fly by generate-sounds.ps1 (C# 5 syntax, works with Windows PowerShell 5.1).
+// Procedurele synthesizer voor monstergeluiden.
+// Wordt ter plekke gecompileerd door generate-sounds.ps1 (C# 5-syntax, werkt met Windows PowerShell 5.1).
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -32,7 +32,7 @@ public class Biquad
         return this;
     }
 
-    // Band-pass with 0 dB peak gain.
+    // Banddoorlaatfilter met 0 dB piekversterking.
     public Biquad BP(double f, double q)
     {
         double c, a; Prep(f, q, out c, out a);
@@ -49,7 +49,7 @@ public class Biquad
     }
 }
 
-// Smoothly interpolated random values in [-1, 1] changing at roughly `rate` Hz.
+// Vloeiend geïnterpoleerde willekeurige waarden in [-1, 1] die ongeveer `rate` keer per seconde veranderen.
 public class SmoothNoise
 {
     double rate, phase, a, b;
@@ -68,7 +68,7 @@ public static class Synth
     public const int SR = 44100;
     public static Random Rng = new Random(31);
 
-    // Formants (Hz) for a huge vocal tract: lower than a human's.
+    // Formanten (Hz) voor een enorm spraakkanaal: lager dan bij een mens.
     static readonly double[] UH = { 450, 900, 1700 };
     static readonly double[] AW = { 520, 800, 1900 };
     static readonly double[] OO = { 300, 650, 1800 };
@@ -89,7 +89,7 @@ public static class Synth
             if (off + i >= 0) dst[off + i] += (float)(src[i] * gain);
     }
 
-    // Linear attack / release envelope.
+    // Lineaire aanzet-/uitsterf-envelop.
     static double Env(double t, double dur, double att, double rel)
     {
         if (t < 0 || t > dur) return 0;
@@ -123,8 +123,8 @@ public static class Synth
         return x;
     }
 
-    // Glottal-pulse voice through morphing formant filters, with subharmonics,
-    // jitter and amplitude roughness for growl texture.
+    // Stembandpulsen door verschuivende formantfilters, met subharmonischen,
+    // jitter en amplitudeschommelingen voor een grommend geluid.
     static float[] Voice(double dur, Func<double, double> f0, Func<double, double> amp,
         double[] vA, double[] vB, Func<double, double> morph,
         double sub, double jitter, double rough, double roughRate, double breath, double drive)
@@ -168,7 +168,7 @@ public static class Synth
         return o;
     }
 
-    // Sine sweep with a quick attack and exponential decay: a bubble / glug.
+    // Sinusglijder met snelle aanzet en exponentieel verval: een bubbel / klok.
     static float[] Bubble(double dur, double fStart, double fEnd)
     {
         float[] o = Buf(dur);
@@ -196,7 +196,7 @@ public static class Synth
         return o;
     }
 
-    // Dense random clicks: teeth crunching.
+    // Dichte willekeurige klikjes: knarsende tanden.
     static float[] Crunch(double dur, double density)
     {
         float[] o = Buf(dur);
@@ -210,7 +210,7 @@ public static class Synth
         return o;
     }
 
-    // ----- The sounds -----
+    // ----- De geluiden -----
 
     static float[] Growl()
     {
@@ -349,7 +349,7 @@ public static class Synth
             brown = brown * 0.995 + Noise() * 0.1;
             o[i] = (float)(lp.Run(brown) * 4 * Env(T(i), d, 0.4, 0.6) * (0.6 + 0.4 * slow.Next()));
         }
-        // Tonal groan of the stomach.
+        // Toonhoog gekreun van de maag.
         double gd = 1.3, ph = 0;
         float[] g = Buf(gd);
         Biquad glp = new Biquad().LP(450, 1.5);
@@ -423,9 +423,9 @@ public static class Synth
     public static void RenderAll(string dir)
     {
         Dictionary<string, Func<float[]>> all = new Dictionary<string, Func<float[]>>();
-        all["growl"] = Growl; all["roar"] = Roar; all["grunt"] = Grunt; all["snarl"] = Snarl;
-        all["chomp"] = Chomp; all["slurp"] = Slurp; all["burp"] = Burp; all["gulp"] = Gulp;
-        all["sniff"] = Sniff; all["tummy-rumble"] = Tummy; all["hiss"] = Hiss; all["snore"] = Snore;
+        all["grom"] = Growl; all["brul"] = Roar; all["kreun"] = Grunt; all["snauw"] = Snarl;
+        all["hap-hap"] = Chomp; all["slurp"] = Slurp; all["boer"] = Burp; all["slik"] = Gulp;
+        all["snuif"] = Sniff; all["buikgerommel"] = Tummy; all["sis"] = Hiss; all["snurk"] = Snore;
         foreach (KeyValuePair<string, Func<float[]>> kv in all)
             WriteWav(Path.Combine(dir, kv.Key + ".wav"), Fade(Normalize(kv.Value(), 0.95), 0.08));
     }

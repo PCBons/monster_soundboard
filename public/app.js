@@ -13,18 +13,18 @@ const master = ctx.createGain();
 master.connect(ctx.destination);
 
 const buffers = new Map();   // id -> AudioBuffer
-const pads = new Map();      // id -> button element
+const pads = new Map();      // id -> knopelement
 const playing = new Set();   // { src, id }
 let sounds = [];
 let overlap = false;
 let wakeLock = null;
 
-try { overlap = localStorage.getItem('overlap') === '1'; } catch (e) { /* storage unavailable */ }
+try { overlap = localStorage.getItem('overlap') === '1'; } catch (e) { /* opslag niet beschikbaar */ }
 
 function setStatus(text) { statusEl.textContent = text; }
 
 function decode(arrayBuffer) {
-  // Older Safari only supports the callback form.
+  // Oudere Safari ondersteunt alleen de callback-vorm.
   return new Promise((resolve, reject) => {
     const p = ctx.decodeAudioData(arrayBuffer, resolve, reject);
     if (p && p.then) p.then(resolve, reject);
@@ -41,7 +41,7 @@ function buildPad(sound, index) {
   btn.querySelector('.emoji').textContent = sound.emoji || '👹';
   btn.querySelector('.label').textContent = sound.label;
 
-  // pointerdown fires immediately on touch (no click delay).
+  // pointerdown gaat direct af bij aanraken (geen klikvertraging).
   btn.addEventListener('pointerdown', (e) => {
     e.preventDefault();
     btn.classList.add('down');
@@ -62,7 +62,7 @@ function markPlaying(id, duration) {
   if (!pad) return;
   pad.style.setProperty('--dur', duration + 's');
   pad.classList.remove('playing');
-  void pad.offsetWidth; // restart the progress animation
+  void pad.offsetWidth; // voortgangsanimatie opnieuw starten
   pad.classList.add('playing');
 }
 
@@ -70,11 +70,11 @@ function refreshPlayingState() {
   const active = new Set([...playing].map((p) => p.id));
   pads.forEach((pad, id) => { if (!active.has(id)) pad.classList.remove('playing'); });
   document.body.classList.toggle('speaking', active.size > 0);
-  if (active.size === 0) setStatus('Ready — tap a sound');
+  if (active.size === 0) setStatus('Klaar — tik op een geluid');
 }
 
 function stopAll() {
-  playing.forEach((p) => { try { p.src.stop(); } catch (e) { /* already stopped */ } });
+  playing.forEach((p) => { try { p.src.stop(); } catch (e) { /* al gestopt */ } });
   playing.clear();
   refreshPlayingState();
 }
@@ -82,7 +82,7 @@ function stopAll() {
 function play(id) {
   if (ctx.state !== 'running') ctx.resume();
   const buffer = buffers.get(id);
-  if (!buffer) { setStatus('Still loading that one…'); return; }
+  if (!buffer) { setStatus('Dit geluid laadt nog…'); return; }
   if (!overlap) stopAll();
 
   const src = ctx.createBufferSource();
@@ -111,25 +111,25 @@ async function loadAll() {
       if (!r.ok) throw new Error(r.status);
       buffers.set(s.id, await decode(await r.arrayBuffer()));
     } catch (e) {
-      console.error('Could not load', s.file, e);
+      console.error('Kon niet laden:', s.file, e);
       pads.get(s.id).classList.add('missing');
     }
     done++;
-    wakeProgress.textContent = `loaded ${done} / ${sounds.length} sounds`;
+    wakeProgress.textContent = `${done} / ${sounds.length} geluiden geladen`;
   }));
 
   const missing = sounds.length - buffers.size;
-  wakeProgress.textContent = missing ? `${missing} sound(s) failed to load` : 'all sounds ready';
-  setStatus(missing ? `${missing} sound(s) failed to load` : 'Ready — tap a sound');
+  wakeProgress.textContent = missing ? `${missing} geluid(en) niet geladen` : 'alle geluiden klaar';
+  setStatus(missing ? `${missing} geluid(en) niet geladen` : 'Klaar — tik op een geluid');
 }
 
-// ---- Screen wake lock: keep the tablet from sleeping during the act ----
+// ---- Scherm wakker houden: de tablet mag tijdens de act niet in slaap vallen ----
 async function requestWakeLock() {
   if (!('wakeLock' in navigator)) return;
   try {
     wakeLock = await navigator.wakeLock.request('screen');
     wakeLock.addEventListener('release', () => { wakeLock = null; });
-  } catch (e) { /* not allowed right now */ }
+  } catch (e) { /* nu niet toegestaan */ }
 }
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
@@ -146,7 +146,7 @@ function toggleFullscreen() {
   else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
 }
 
-// First tap unlocks audio (required by iOS/Android), keeps the screen on, goes fullscreen.
+// De eerste tik ontgrendelt geluid (verplicht op iOS/Android), houdt het scherm aan en gaat naar volledig scherm.
 function unlock() {
   ctx.resume();
   const silent = ctx.createBufferSource();
@@ -160,14 +160,14 @@ function unlock() {
 wake.addEventListener('pointerdown', (e) => { e.preventDefault(); unlock(); });
 wake.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') unlock(); });
 
-// ---- Controls ----
+// ---- Bediening ----
 function renderOverlap() {
   overlapBtn.setAttribute('aria-pressed', String(overlap));
-  overlapBtn.textContent = 'Layer: ' + (overlap ? 'on' : 'off');
+  overlapBtn.textContent = 'Stapelen: ' + (overlap ? 'aan' : 'uit');
 }
 overlapBtn.addEventListener('click', () => {
   overlap = !overlap;
-  try { localStorage.setItem('overlap', overlap ? '1' : '0'); } catch (e) { /* ignore */ }
+  try { localStorage.setItem('overlap', overlap ? '1' : '0'); } catch (e) { /* negeren */ }
   renderOverlap();
 });
 renderOverlap();
@@ -175,7 +175,7 @@ renderOverlap();
 document.getElementById('stop').addEventListener('pointerdown', (e) => { e.preventDefault(); stopAll(); });
 document.getElementById('fullscreen').addEventListener('click', toggleFullscreen);
 
-// Keyboard shortcuts for laptop use: 1-0 and Q-P, space/Escape = stop.
+// Sneltoetsen op een laptop: 1-0 en Q-P, spatie/Escape = stop.
 document.addEventListener('keydown', (e) => {
   if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
   if (!wake.classList.contains('hidden')) return;
@@ -184,7 +184,7 @@ document.addEventListener('keydown', (e) => {
   if (i >= 0 && sounds[i]) play(sounds[i].id);
 });
 
-// Stop iOS from scrolling / bouncing the page when swiping across the board.
+// Voorkom dat iOS de pagina laat scrollen / verend meebewegen bij vegen over het bord.
 document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
 
 if ('serviceWorker' in navigator) {
@@ -193,6 +193,6 @@ if ('serviceWorker' in navigator) {
 
 loadAll().catch((e) => {
   console.error(e);
-  setStatus('Could not load sounds.json');
-  wakeProgress.textContent = 'could not load sounds — check the connection';
+  setStatus('Kon sounds.json niet laden');
+  wakeProgress.textContent = 'kon geluiden niet laden — controleer de verbinding';
 });

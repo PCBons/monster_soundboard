@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
@@ -8,7 +8,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Monster">
-  <title>Monster Soundboard</title>
+  <title>Monster Geluidenbord</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon-192.png">
@@ -16,22 +16,22 @@
 </head>
 <body>
   <header>
-    <h1><span class="eye"></span> Monster Door</h1>
-    <div id="status" aria-live="polite">Loading sounds…</div>
+    <h1><span class="eye"></span> Monsterdeur</h1>
+    <div id="status" aria-live="polite">Geluiden laden…</div>
     <div class="controls">
-      <button id="overlap" class="ctl" aria-pressed="false" title="Let sounds play over each other">Layer: off</button>
-      <button id="fullscreen" class="ctl" title="Fullscreen">⛶</button>
+      <button id="overlap" class="ctl" aria-pressed="false" title="Laat geluiden over elkaar heen spelen">Stapelen: uit</button>
+      <button id="fullscreen" class="ctl" title="Volledig scherm">⛶</button>
       <button id="stop" class="ctl stop">■ STOP</button>
     </div>
   </header>
 
-  <main id="board" aria-label="Sound buttons"></main>
+  <main id="board" aria-label="Geluidsknoppen"></main>
 
   <div id="wake" role="button" tabindex="0">
     <div class="wake-inner">
       <div class="big">👹</div>
-      <div>Tap to wake the monster</div>
-      <small id="wake-progress">loading sounds…</small>
+      <div>Tik om het monster te wekken</div>
+      <small id="wake-progress">geluiden laden…</small>
     </div>
   </div>
 

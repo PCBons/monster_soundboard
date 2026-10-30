@@ -1,27 +1,27 @@
-# 👹 Monster Door Soundboard
+# 👹 Monsterdeur Geluidenbord
 
-A touch-screen soundboard for a Halloween "monster door" act: the door is the monster, the
-mailbox is its mouth, and a wireless speaker outside does the talking. Open the page on a
-tablet, connect the tablet to the speaker (Bluetooth/AirPlay), and tap.
+Een geluidenbord voor een touchscreen, voor een Halloween-act met een "monsterdeur": de deur
+is het monster, de brievenbus is de mond en een draadloze speaker buiten laat het monster
+praten. Open de pagina op een tablet, verbind de tablet met de speaker (Bluetooth/AirPlay) en tik.
 
-- 20 big labelled buttons (growls, eating noises, spoken lines), colour-coded per group
-- Sounds are preloaded into memory and fire on touch-down, so there's no delay
-- **Layer** toggle: off = a new sound cuts off the previous one (natural for one mouth), on = sounds play over each other
-- **STOP** button silences everything
-- Keeps the screen awake, goes fullscreen, and works offline once loaded (if the Wi-Fi at the door drops, it keeps working)
-- Keyboard shortcuts on a laptop: `1`–`0` and `Q`–`P`, `Space`/`Esc` = stop
+- 20 grote knoppen met tekst (gegrom, eetgeluiden, gesproken zinnen), met een kleur per groep
+- Geluiden worden vooraf in het geheugen geladen en starten zodra je het scherm aanraakt, dus zonder vertraging
+- **Stapelen**-knop: uit = een nieuw geluid onderbreekt het vorige (logisch voor één mond), aan = geluiden spelen over elkaar heen
+- **STOP**-knop zet alles stil
+- Houdt het scherm aan, gaat naar volledig scherm en blijft werken als de wifi wegvalt (zodra alles één keer geladen is)
+- Sneltoetsen op een laptop: `1`–`0` en `Q`–`P`, `Spatie`/`Esc` = stop
 
-## Deploy on Railway
+## Publiceren op Railway
 
-1. Push this repo to GitHub.
-2. In Railway: **New Project → Deploy from GitHub repo** → pick this repo.
-3. Once deployed: **Settings → Networking → Generate Domain**.
-4. Open that URL on the tablet.
+1. Push deze repo naar GitHub.
+2. In Railway: **New Project → Deploy from GitHub repo** → kies deze repo.
+3. Na het deployen: **Settings → Networking → Generate Domain**.
+4. Open die URL op de tablet.
 
-Railway detects Node from `package.json` and runs `node server.js` (see `railway.json`).
-There are no npm dependencies. The server listens on `$PORT` and has a `/health` endpoint.
+Railway herkent Node aan `package.json` en start `node server.js` (zie `railway.json`).
+Er zijn geen npm-afhankelijkheden. De server luistert op `$PORT` en heeft een `/health`-endpoint.
 
-Or with the Railway CLI:
+Of met de Railway CLI:
 
 ```bash
 railway init
@@ -29,47 +29,47 @@ railway up
 railway domain
 ```
 
-## On the tablet
+## Op de tablet
 
-1. Open the URL and **add it to the home screen** (Safari: Share → Add to Home Screen;
-   Chrome: ⋮ → Add to Home screen). Launched from there it runs fullscreen like an app.
-2. Tap "Tap to wake the monster" once — browsers only allow audio after a first tap.
-3. Connect the tablet to the outdoor speaker and set the tablet volume to max; control the
-   loudness on the speaker.
-4. Turn off auto-lock as a backup (the page also asks the screen to stay on).
-5. Bluetooth speakers add ~0.1–0.3 s of delay. Tap a little *before* you want the sound.
+1. Open de URL en **zet hem op het beginscherm** (Safari: Deel → Zet op beginscherm;
+   Chrome: ⋮ → Toevoegen aan startscherm). Vanaf daar opent hij schermvullend, als een app.
+2. Tik één keer op "Tik om het monster te wekken": browsers staan geluid pas toe na een eerste tik.
+3. Verbind de tablet met de speaker buiten en zet het volume van de tablet op maximaal; regel
+   het geluidsniveau op de speaker.
+4. Zet automatische vergrendeling uit als extra zekerheid (de pagina vraagt zelf ook om het scherm aan te houden).
+5. Bluetooth-speakers hebben ~0,1–0,3 s vertraging. Tik dus net *vóór* het moment dat je het geluid wilt.
 
-## Running locally
+## Lokaal draaien
 
 ```bash
 npm start
 ```
 
-Then open http://localhost:3000.
+Open daarna http://localhost:3000.
 
-## Changing the sounds
+## Geluiden aanpassen
 
-Buttons are defined in `public/sounds.json` (label, emoji, colour group, file). To use your
-own recordings, drop an `.mp3` into `public/sounds/` and point an entry at it. Groups are
-`growl` (red), `eat` (green), `body` (purple) and `talk` (orange). With more or fewer than 20
-buttons, adjust the grid in `public/style.css` (`#board`).
+De knoppen staan in `public/sounds.json` (tekst, emoji, kleurgroep, bestand). Wil je eigen
+opnames gebruiken, zet dan een `.mp3` in `public/sounds/` en laat een knop ernaar verwijzen.
+De groepen zijn `growl` (rood), `eat` (groen), `body` (paars) en `talk` (oranje). Gebruik je
+meer of minder dan 20 knoppen, pas dan het raster aan in `public/style.css` (`#board`).
 
-After changing files, bump `CACHE` in `public/sw.js` so tablets that already cached the old
-version pick up the new one.
+Verhoog na het wijzigen van bestanden `CACHE` in `public/sw.js`, zodat tablets die de oude
+versie al bewaard hebben de nieuwe ophalen.
 
-### Regenerating the built-in sounds
+### De ingebouwde geluiden opnieuw maken
 
-All 20 sounds were generated, not downloaded, so there's no licensing to worry about:
+Alle 20 geluiden zijn zelf gemaakt, niet gedownload, dus er zijn geen licentieproblemen:
 
-- `tools/MonsterSynth.cs` synthesizes the growls, roar, chomps, slurp, burp, snore, etc.
-- The spoken lines are recorded with Windows text-to-speech and turned into a monster voice
-  by ffmpeg (pitched down, layered with a sub-voice, gravelly tremolo, distortion, echo).
+- `tools/MonsterSynth.cs` synthetiseert het grommen, brullen, happen, slurpen, boeren, snurken enz.
+- De gesproken zinnen worden ingesproken door de Nederlandse Windows-stem "Microsoft Frank" en
+  door ffmpeg omgevormd tot monsterstem (verlaagd, gelaagd met een nog lagere stem, rauwe
+  tremolo, vervorming en echo).
 
-To tweak and rebuild them (Windows, needs `ffmpeg` on PATH):
+Om ze aan te passen en opnieuw te maken (Windows, `ffmpeg` moet in het PATH staan):
 
 ```bash
 powershell -ExecutionPolicy Bypass -File tools/generate-sounds.ps1
 ```
 
-The spoken phrases are listed at the top of that script. Change them to say anything,
-in any language your Windows text-to-speech voices support.
+De gesproken zinnen staan bovenaan dat script; je kunt het monster daar alles laten zeggen.

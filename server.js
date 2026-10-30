@@ -1,4 +1,4 @@
-// Zero-dependency static file server for the monster soundboard.
+// Statische bestandsserver zonder afhankelijkheden voor het monster-geluidenbord.
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -26,27 +26,27 @@ function send(res, status, body) {
 }
 
 const server = http.createServer((req, res) => {
-  if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, 'Method not allowed');
+  if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, 'Methode niet toegestaan');
 
   let pathname;
   try {
     pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
   } catch (e) {
-    return send(res, 400, 'Bad request');
+    return send(res, 400, 'Ongeldig verzoek');
   }
   if (pathname === '/health') return send(res, 200, 'ok');
   if (pathname.endsWith('/')) pathname += 'index.html';
 
   const file = path.join(ROOT, path.normalize(pathname));
-  if (!file.startsWith(ROOT + path.sep)) return send(res, 403, 'Forbidden');
+  if (!file.startsWith(ROOT + path.sep)) return send(res, 403, 'Verboden');
 
   fs.stat(file, (err, stat) => {
-    if (err || !stat.isFile()) return send(res, 404, 'Not found');
+    if (err || !stat.isFile()) return send(res, 404, 'Niet gevonden');
     const ext = path.extname(file).toLowerCase();
     res.writeHead(200, {
       'Content-Type': TYPES[ext] || 'application/octet-stream',
       'Content-Length': stat.size,
-      // Sounds rarely change; everything else revalidates so updates show up right away.
+      // Geluiden veranderen zelden; de rest wordt steeds gecontroleerd zodat updates direct zichtbaar zijn.
       'Cache-Control': ext === '.mp3' ? 'public, max-age=86400' : 'no-cache',
     });
     if (req.method === 'HEAD') return res.end();
@@ -55,5 +55,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Monster soundboard listening on port ${PORT}`);
+  console.log(`Monster-geluidenbord luistert op poort ${PORT}`);
 });

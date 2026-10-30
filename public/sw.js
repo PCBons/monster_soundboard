@@ -1,6 +1,6 @@
-// Caches the app and all sounds so the board keeps working if the Wi-Fi drops
-// during the act. Network first, so updates show up as soon as you're online.
-const CACHE = 'monster-soundboard-v1';
+// Bewaart de app en alle geluiden in de cache, zodat het bord blijft werken als de wifi
+// tijdens de act wegvalt. Eerst het netwerk, zodat updates direct verschijnen als je online bent.
+const CACHE = 'monster-soundboard-v2';
 const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'sounds.json', 'manifest.webmanifest', 'icon.svg', 'icon-192.png'];
 
 self.addEventListener('install', (event) => {

@@ -1,7 +1,7 @@
 {
   "name": "monster-soundboard",
   "version": "1.0.0",
-  "description": "Tablet soundboard for a Halloween monster door",
+  "description": "Tablet-geluidenbord voor een Halloween-monsterdeur",
   "private": true,
   "main": "server.js",
   "scripts": {
